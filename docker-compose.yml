@@ -119,19 +119,6 @@ services:
     networks:
       - app-network
 
-  frontend:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile.frontend
-    container_name: frontend
-    ports:
-      - "3000:3000"
-      - "50745:3000"
-    depends_on:
-      - gateway
-    networks:
-      - app-network
-
   pgadmin:
     container_name: pgadmin
     image: dpage/pgadmin4

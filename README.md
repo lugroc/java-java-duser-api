@@ -1,14 +1,11 @@
 # Full-Stack Microservices Application
 
-A full-stack microservices platform built with **Spring Boot**, **Nest.js**, and **React** — featuring customer authentication, fraud detection, inventory management, and an admin dashboard.
+A full-stack microservices platform built with **Spring Boot** and **React** — featuring customer authentication, fraud detection, inventory management, and an admin dashboard.
 
 ## Architecture
 
 ```
 React SPA (Vite)
-      │  HTTP
-      ▼
-Nest.js BFF (Port 3000)
       │  HTTP
       ▼
 Spring Cloud Gateway (Port 8765)
@@ -36,7 +33,6 @@ Spring Cloud Gateway (Port 8765)
 ### Frontend
 | Layer | Framework | Port |
 |-------|-----------|------|
-| BFF | Nest.js 11 | 3000 |
 | SPA | React 19, Vite, React Router 7 | 5173 (dev) |
 
 ### DevOps
@@ -58,7 +54,6 @@ Spring Cloud Gateway (Port 8765)
 docker compose up --build
 
 # Wait for all services to start, then access:
-# Frontend:   http://localhost:3000
 # API:        http://localhost:8765 (gateway)
 # Eureka:     http://localhost:8761
 # pgAdmin:    http://localhost:5050 (admin@example.com / password)
@@ -81,7 +76,6 @@ cd notification && mvn spring-boot:run # port 8083
 cd gateway && mvn spring-boot:run      # port 8765
 
 # 4. Start frontend
-cd frontend && npm install && npm run start:dev        # Nest.js on 3000
 cd frontend/client && npm install && npx vite           # React on 5173
 ```
 
@@ -106,20 +100,11 @@ cd frontend/client && npm install && npx vite           # React on 5173
 - `GET /api/v1/fraud-check/{customerId}` — Check if customer is fraudulent
 - **Swagger:** http://localhost:8081/swagger-ui.html
 
-### Frontend (Nest.js BFF)
-- `GET /api/auth/login` — Proxy to customer login
-- `GET /api/auth/register` — Proxy to customer registration
-- `GET /api/inventory/*` — Proxy to inventory service
-- All other routes serve the React SPA
-
 ## Testing
 
 ```bash
 # Java tests (all services)
 mvn test
-
-# Nest.js tests
-cd frontend && npm test
 
 # React tests
 cd frontend/client && npm test
@@ -129,8 +114,7 @@ cd frontend/client && npm test
 
 GitHub Actions runs on every push to `main`:
 1. **Java** — `mvn verify` (all services)
-2. **Nest.js** — `npm test && npm run build`
-3. **React** — `npm test && npm run build`
+2. **React** — `npm test && npm run build`
 
 ## Project Structure
 
@@ -142,7 +126,7 @@ GitHub Actions runs on every push to `main`:
 ├── gateway/            # API Gateway
 ├── inventory/          # Product inventory
 ├── notification/       # Notifications
-├── frontend/           # Nest.js BFF + React SPA
+├── frontend/client/    # React SPA
 ├── docker/             # Dockerfiles
 ├── docker-compose.yml  # Full stack orchestration
 └── pom.xml             # Maven parent POM
