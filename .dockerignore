@@ -1,0 +1,9 @@
+frontend/node_modules
+frontend/client/node_modules
+frontend/client/dist
+frontend/dist
+data
+.git
+*.md
+.vscode
+**/target/

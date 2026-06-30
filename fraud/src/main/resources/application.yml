@@ -1,0 +1,33 @@
+server:
+  port: 8081
+  additionalPorts: 8085
+
+
+spring:
+  application:
+    name: fraud
+  datasource:
+    username: 'my-app'
+    url: jdbc:postgresql://localhost:5432/fraud
+    password: 'password'
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: 'true'
+    hibernate:
+      ddl-auto: update
+    show-sql: 'true'
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+    fetchRegistry: true
+    registerWithEureka: true

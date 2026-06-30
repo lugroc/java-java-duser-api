@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; background: #f0f2f5; }
+        .navbar { background: #1877f2; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .navbar h1 { margin: 0; font-size: 1.25rem; }
+        .navbar button { background: white; color: #1877f2; border: none; padding: 6px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+        .card { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
+        .card h2 { color: #333; }
+        .card p { color: #666; }
+        .hidden { display: none; }
+        #sessionInfo { margin-top: 1rem; padding: 1rem; background: #e8f4fd; border-radius: 4px; word-break: break-all; font-size: 0.85rem; color: #555; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>My App</h1>
+        <button id="logoutBtn">Logout</button>
+    </div>
+    <div class="container">
+        <div class="card" id="loadingCard">
+            <h2>Loading...</h2>
+        </div>
+        <div class="card hidden" id="welcomeCard">
+            <h2 id="greeting">Welcome!</h2>
+            <p>You are logged in.</p>
+            <div id="sessionInfo"></div>
+        </div>
+        <div class="card hidden" id="unauthCard">
+            <h2>Not logged in</h2>
+            <p>Please <a href="/login">login</a> or <a href="/register">register</a>.</p>
+        </div>
+    </div>
+    <script>
+        async function checkSession() {
+            const sessionId = localStorage.getItem('sessionId');
+            if (!sessionId) {
+                document.getElementById('loadingCard').classList.add('hidden');
+                document.getElementById('unauthCard').classList.remove('hidden');
+                return;
+            }
+            try {
+                const res = await fetch('/api/v1/sessions/validate/' + sessionId);
+                const data = await res.json();
+                document.getElementById('loadingCard').classList.add('hidden');
+                if (data.valid) {
+                    document.getElementById('welcomeCard').classList.remove('hidden');
+                    document.getElementById('greeting').textContent = 'Welcome, customer #' + data.customerId;
+                    document.getElementById('sessionInfo').textContent = 'Session ID: ' + sessionId;
+                } else {
+                    localStorage.removeItem('sessionId');
+                    document.getElementById('unauthCard').classList.remove('hidden');
+                }
+            } catch {
+                document.getElementById('loadingCard').classList.add('hidden');
+                document.getElementById('unauthCard').classList.remove('hidden');
+            }
+        }
+
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            const sessionId = localStorage.getItem('sessionId');
+            if (sessionId) {
+                await fetch('/api/v1/sessions/logout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sessionId })
+                });
+            }
+            localStorage.removeItem('sessionId');
+            window.location.href = '/login';
+        });
+
+        checkSession();
+    </script>
+</body>
+</html>
