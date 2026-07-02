@@ -3,8 +3,6 @@ import org.springframework.stereotype.Service;
 import com.lugro.NotificationClient.NotificationClient;
 import com.lugro.NotificationClient.NotificationRequest;
 
-import jakarta.validation.constraints.NotNull;
-
 import com.lugro.Fraud.FraudCheckResponse;
 import com.lugro.Fraud.FraudClient;
 
@@ -39,14 +37,13 @@ public class CustomerService {
             .build();
         
         customerRepository.saveAndFlush(customer);
-        @NotNull(message = "fraud check failed")
         FraudCheckResponse fraudCheckResponse = fraudClient.isFraudster(customer.getId());
 
         if(fraudCheckResponse.isFraudster()){
             throw new IllegalStateException("fraudster");
         };
         customerRepository.save(customer);
-        //todo: async
+
         notificationClient.sendNotification(
             new NotificationRequest(
                 customer.getId(),

@@ -37,4 +37,3 @@ public class SecurityConfig {
         return http.build();
     }
 }
-// rebuild trigger 20260630001500
