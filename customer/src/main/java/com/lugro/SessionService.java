@@ -17,9 +17,8 @@ public class SessionService {
     private final PasswordEncoder passwordEncoder;
 
     public UUID login(String email, String password) {
-        Customer customer = customerRepository.findAll().stream()
-            .filter(c -> c.getEmail().equals(email) && passwordEncoder.matches(password, c.getPassword()))
-            .findFirst()
+        Customer customer = customerRepository.findByEmail(email)
+            .filter(c -> passwordEncoder.matches(password, c.getPassword()))
             .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
 
         Session session = Session.builder()
