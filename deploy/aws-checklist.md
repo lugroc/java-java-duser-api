@@ -48,45 +48,22 @@ curl http://localhost:8080/api/v1/sessions/validate/00000000-0000-0000-0000-0000
 
 ## 3. Lambda — Contact Form
 
-```bash
-cd aws-lambda
-sam build
-sam deploy --guided
-```
+Deployed via AWS Console (API Gateway + DynamoDB). For redeploys, push to `lugroc/aws-lambda-form` — GitHub Actions handles it.
 
-**`sam deploy` options to avoid charges:**
-- `Stack Name`: portfolio-contact
-- `AWS Region`: us-east-1
-- Confirm before changes: Y
-- **Allow SAM CLI IAM role creation**: Y (creates free IAM roles)
-- **`Disable rollback`**: N
-- **`ContactFunction may not have authorization defined`**: Y (API is public — okay for contact form)
+## 4. Frontend (Vercel)
 
-**Do NOT select a VPC during deployment** — that creates a NAT Gateway ($32/mo).
+Monolith API base URL is in `vercel.json` rewrites → EC2 public IP.
 
----
-
-### 4. Frontend (Vercel)
-
-After deploy, set Vercel env variables:
-
+Set Vercel env variables:
 | Variable | Value |
 |---|---|
 | `VITE_CONTACT_API_URL` | `https://xxx.execute-api.us-east-1.amazonaws.com/Prod/contact` |
 
-Then redeploy the frontend on Vercel.
+## 5. Stop when not using (optional, saves credits)
 
-The monolith API base URL stays in `vercel.json` rewrites → your EC2 public IP.
+Stop (not terminate) the EC2 instance from the console — EBS storage still costs ~$3/mo but within free tier.
 
----
-
-### 5. Stop when not using (optional, saves credits)
-
-Stop (not terminate) the EC2 instance from the console — EBS storage still costs ~$3/mo but within free tier. Lambda/DynamoDB/API Gateway cost $0 at this scale.
-
----
-
-### Cost traps to NEVER click:
+## Cost traps to NEVER click
 - ❌ CloudFront distribution outside free tier
 - ❌ Load Balancer (ALB/NLB) of any size
 - ❌ NAT Gateway
